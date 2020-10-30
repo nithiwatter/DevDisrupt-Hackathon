@@ -21,7 +21,6 @@ class LoadingPage extends Component {
       .auth()
       .onAuthStateChanged(async (response) => {
         if (response) {
-          console.log(response);
           const { uid } = response;
           // access our firestore to get additional information regarding this user
           const user = await firebaseUtils.getUserFromFirestore(uid);
