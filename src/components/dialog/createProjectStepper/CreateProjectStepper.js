@@ -1,5 +1,6 @@
 import React from "react";
 import { Formik, Form, Field, useFormikContext } from "formik";
+import add from "date-fns/add";
 import * as Yup from "yup";
 import {
   Stepper,
@@ -14,6 +15,7 @@ import { KeyboardDatePicker } from "formik-material-ui-pickers";
 import red from "@material-ui/core/colors/red";
 
 import CategorySelect from "./CategorySelect";
+import SubmitButton from "./SubmitButton";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,16 +51,20 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     color: red[500],
   },
+  imgContainer: {
+    display: "flex",
+    justifyContent: "center",
+  },
+  img: {
+    maxWidth: 300,
+  },
 }));
-
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
 
 const validationSchema = Yup.object().shape({
   projectDescription: Yup.string().required("Required"),
   projectGoal: Yup.number().min(1, "Please enter a valid amount"),
   projectEndDate: Yup.date().min(
-    tomorrow,
+    new Date(),
     "The earliest it could be is tomorrow"
   ),
 });
@@ -114,6 +120,14 @@ function StepContent(props) {
         </>
       ),
       id: "projectGoal",
+    },
+    {
+      cmp: (
+        <div className={classes.imgContainer}>
+          <img alt="" src="/success.svg" className={classes.img} />
+        </div>
+      ),
+      id: "successImage",
     },
   ];
   return (
@@ -194,7 +208,7 @@ export default function CreateProjectStepper() {
           category: "",
           projectDescription: "",
           projectGoal: 1,
-          projectEndDate: tomorrow,
+          projectEndDate: add(new Date(), { days: 1 }),
         }}
         validationSchema={validationSchema}
         onSubmit={(values, { setSubmitting }) => {
@@ -217,15 +231,12 @@ export default function CreateProjectStepper() {
               >
                 Back
               </Button>
-              <Button
-                variant="contained"
-                color="primary"
+              <SubmitButton
                 disabled={handleDisabled(activeStep, values, errors)}
-                onClick={handleNext}
-                className={classes.button}
-              >
-                {activeStep === steps.length - 1 ? "Finish" : "Next"}
-              </Button>
+                activeStep={activeStep}
+                steps={steps}
+                handleNext={handleNext}
+              />
             </div>
           </>
         )}
