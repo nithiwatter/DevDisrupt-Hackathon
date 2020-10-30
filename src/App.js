@@ -1,23 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import { CssBaseline, ThemeProvider } from "@material-ui/core";
+
+import AuthContext from "./auth/context";
+import theme from "./theme";
+import Routes from "./Routes";
+import LoadingPage from "./views/LoadingPage";
 
 function App() {
+  const [user, setUser] = React.useState(null);
+  const [isReady, setIsReady] = React.useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <AuthContext.Provider value={{ user, setUser }}>
+        <CssBaseline />
+        <ThemeProvider theme={theme}>
+          {isReady ? (
+            <Router>
+              <Routes />
+            </Router>
+          ) : (
+            <LoadingPage setUser={setUser} setIsReady={setIsReady} />
+          )}
+        </ThemeProvider>
+      </AuthContext.Provider>
     </div>
   );
 }
