@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { CssBaseline, ThemeProvider } from "@material-ui/core";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 
 import AuthContext from "./auth/context";
 import theme from "./theme";
@@ -16,13 +18,15 @@ function App() {
       <AuthContext.Provider value={{ user, setUser }}>
         <CssBaseline />
         <ThemeProvider theme={theme}>
-          {isReady ? (
-            <Router>
-              <Routes />
-            </Router>
-          ) : (
-            <LoadingPage setUser={setUser} setIsReady={setIsReady} />
-          )}
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            {isReady ? (
+              <Router>
+                <Routes />
+              </Router>
+            ) : (
+              <LoadingPage setUser={setUser} setIsReady={setIsReady} />
+            )}
+          </MuiPickersUtilsProvider>
         </ThemeProvider>
       </AuthContext.Provider>
     </div>

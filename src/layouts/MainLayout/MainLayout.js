@@ -2,6 +2,8 @@ import React from "react";
 import { makeStyles } from "@material-ui/core";
 
 import NavBar from "./NavBar";
+import FullScreenDialog from "../../components/dialog/FulllScreenDialog";
+import CreateProjectStepper from "../../components/dialog/createProjectStepper/CreateProjectStepper";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -19,16 +21,32 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MainLayout(props) {
-  const classes = useStyles();
   const { children } = props;
+  const classes = useStyles();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   return (
     <div>
-      <NavBar />
+      <NavBar handleClickOpen={handleClickOpen} />
       <main className={classes.content}>
         <div className={classes.toolbar} />
         {children}
       </main>
+      <FullScreenDialog
+        open={open}
+        handleClose={handleClose}
+        title="Start your journey here"
+      >
+        <CreateProjectStepper />
+      </FullScreenDialog>
     </div>
   );
 }

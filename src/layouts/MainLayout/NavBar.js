@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import ExploreIcon from "@material-ui/icons/Explore";
 import SearchIcon from "@material-ui/icons/Search";
+import AddIcon from "@material-ui/icons/Add";
 
 import AuthContext from "../../auth/context";
 import { firebase } from "../../firebase/config";
@@ -25,8 +26,11 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     alignItems: "center",
   },
-  exploreButton: {
+  exploreIcon: {
     marginRight: theme.spacing(2),
+  },
+  addIcon: {
+    marginLeft: theme.spacing(2),
   },
   title: {
     flexGrow: 1,
@@ -77,7 +81,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function NavBar() {
+export default function NavBar(props) {
+  const { handleClickOpen } = props;
   const classes = useStyles();
   const { user, setUser } = React.useContext(AuthContext);
 
@@ -104,12 +109,19 @@ export default function NavBar() {
           <div className={classes.itemsContainer}>
             <IconButton
               edge="start"
-              className={classes.exploreButton}
+              className={classes.exploreIcon}
               color="inherit"
             >
               <ExploreIcon />
             </IconButton>
             <Typography variant="h6">Start a project</Typography>
+            <IconButton
+              color="inherit"
+              className={classes.addIcon}
+              onClick={handleClickOpen}
+            >
+              <AddIcon />
+            </IconButton>
           </div>
 
           <Typography variant="h6" className={classes.title} align="center">
