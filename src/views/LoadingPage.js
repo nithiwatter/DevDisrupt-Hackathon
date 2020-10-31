@@ -3,6 +3,9 @@ import { CircularProgress, withStyles } from "@material-ui/core";
 
 import { firebase } from "../firebase/config";
 import firebaseUtils from "../firebase/firebaseUtils";
+import ethEnabled from "../ethereum/web3";
+import { abi, address } from "../ethereum/crowdfundInstance";
+import methods from "../ethereum/methods";
 
 const styles = () => ({
   root: {
@@ -16,7 +19,7 @@ const styles = () => ({
 
 class LoadingPage extends Component {
   componentDidMount() {
-    const { setUser, setIsReady } = this.props;
+    const { setUser, setIsReady, setAccount } = this.props;
     this.unregisterAuthObserver = firebase
       .auth()
       .onAuthStateChanged(async (response) => {
@@ -26,7 +29,19 @@ class LoadingPage extends Component {
           const user = await firebaseUtils.getUserFromFirestore(uid);
           setUser(user);
         }
+        // initialize all web3 config while loading
+        const web3 = ethEnabled();
+        if (!web3) {
+          // need to handle this better
+          setIsReady(true);
+          return alert("Please install the Metamask Chrome Extension!");
+        }
+        const instance = new web3.eth.Contract(abi, address);
+        methods.initialize(instance);
+        const account = await methods.getAccount();
+
         setIsReady(true);
+        setAccount(account);
       });
   }
 

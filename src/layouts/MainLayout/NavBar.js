@@ -16,7 +16,10 @@ import SearchIcon from "@material-ui/icons/Search";
 import AddIcon from "@material-ui/icons/Add";
 
 import AuthContext from "../../auth/context";
+import AccountContext from "../../ethereum/accountContext";
+import methods from "../../ethereum/methods";
 import { firebase } from "../../firebase/config";
+import { openSnackbarExternal } from "../../components/notifier/Notifier";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -79,16 +82,31 @@ const useStyles = makeStyles((theme) => ({
   avatar: {
     marginRight: theme.spacing(2),
   },
+  ethereumButton: {
+    marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
+  },
 }));
 
 export default function NavBar(props) {
   const { handleClickOpen } = props;
   const classes = useStyles();
   const { user, setUser } = React.useContext(AuthContext);
+  const { account, setAccount } = React.useContext(AccountContext);
 
   const handleLogout = async () => {
     await firebase.auth().signOut();
     setUser(null);
+  };
+
+  const enableEthereum = async () => {
+    const account = await methods.getAccount();
+    if (!account)
+      return openSnackbarExternal({
+        message: "User does not grant permissions!",
+        severity: "error",
+      });
+    setAccount(account);
   };
 
   const userAvatar = (user) => {
@@ -149,9 +167,21 @@ export default function NavBar(props) {
               </Button>
             )}
             {user && (
-              <Button color="inherit" onClick={handleLogout}>
-                Logout
-              </Button>
+              <div>
+                {!account && (
+                  <Button
+                    color="inherit"
+                    className={classes.ethereumButton}
+                    onClick={enableEthereum}
+                  >
+                    Enable Ethereum
+                  </Button>
+                )}
+
+                <Button color="inherit" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </div>
             )}
           </div>
         </Toolbar>

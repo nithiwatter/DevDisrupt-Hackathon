@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, useFormikContext } from "formik";
 import add from "date-fns/add";
+import differenceInDays from "date-fns/differenceInDays";
 import * as Yup from "yup";
 import {
   Stepper,
@@ -14,6 +15,8 @@ import { TextField } from "formik-material-ui";
 import { KeyboardDatePicker } from "formik-material-ui-pickers";
 import red from "@material-ui/core/colors/red";
 
+import AccountContext from "../../../ethereum/accountContext";
+import methods from "../../../ethereum/methods";
 import CategorySelect from "./CategorySelect";
 import SubmitButton from "./SubmitButton";
 
@@ -51,6 +54,10 @@ const useStyles = makeStyles((theme) => ({
     marginTop: theme.spacing(2),
     color: red[500],
   },
+  projectTitleContainer: {
+    display: "flex",
+    justifyContent: "center",
+  },
   imgContainer: {
     display: "flex",
     justifyContent: "center",
@@ -75,7 +82,22 @@ function StepContent(props) {
   const classes = useStyles();
 
   const allSteps = [
-    { cmp: <CategorySelect />, id: "category" },
+    {
+      cmp: (
+        <>
+          <div className={classes.projectTitleContainer}>
+            <Field
+              component={TextField}
+              name="projectTitle"
+              label="Project Title"
+              variant="outlined"
+            />
+          </div>
+          <CategorySelect />
+        </>
+      ),
+      id: "category",
+    },
     {
       cmp: (
         <Field
@@ -163,6 +185,7 @@ function MyForm(props) {
 
 export default function CreateProjectStepper() {
   const classes = useStyles();
+  const { account } = React.useContext(AccountContext);
   const [activeStep, setActiveStep] = React.useState(0);
   const steps = getSteps();
 
@@ -205,6 +228,7 @@ export default function CreateProjectStepper() {
 
       <Formik
         initialValues={{
+          projectTitle: "",
           category: "",
           projectDescription: "",
           projectGoal: 1,
@@ -214,7 +238,15 @@ export default function CreateProjectStepper() {
         onSubmit={(values, { setSubmitting }) => {
           setTimeout(() => {
             setSubmitting(false);
-            alert(JSON.stringify(values, null, 2));
+            const projectData = {
+              projectTitle: values.projectTitle,
+              projectDescription: values.projectDescription,
+              projectGoal: values.projectGoal,
+              projectDuration:
+                differenceInDays(values.projectEndDate, new Date()) + 1,
+            };
+            console.log(projectData);
+            methods.createProject(projectData, account);
           }, 500);
         }}
       >
