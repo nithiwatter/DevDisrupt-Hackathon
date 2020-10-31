@@ -36,6 +36,7 @@ const createProject = (projectData, account) => {
     projectGoal,
     projectDuration,
   } = projectData;
+
   crowdfundInstance.methods
     .startProject(
       projectTitle,
@@ -45,9 +46,11 @@ const createProject = (projectData, account) => {
     )
     .send({
       from: account,
+      gasPrice: "100000000000",
+      gas: 40000,
     })
     .then(() => console.log("success"))
-    .catch((e) =>
+    .catch((_) =>
       openSnackbarExternal({
         message: "Please authorize the transaction!",
         severity: "error",
