@@ -1,20 +1,6 @@
-const address = "0x81A1f44b97FfBb1101F49a346420bE8D7C2cB4f2";
+const address = "0xc6d0270f936af9a47a5129b1fc5360965ca177cb";
 
 const abi = [
-  {
-    constant: true,
-    inputs: [],
-    name: "returnAllProjects",
-    outputs: [
-      {
-        name: "",
-        type: "address[]",
-      },
-    ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
-  },
   {
     constant: false,
     inputs: [
@@ -24,6 +10,10 @@ const abi = [
       },
       {
         name: "description",
+        type: "string",
+      },
+      {
+        name: "category",
         type: "string",
       },
       {
@@ -66,6 +56,11 @@ const abi = [
       },
       {
         indexed: false,
+        name: "projectCategory",
+        type: "string",
+      },
+      {
+        indexed: false,
         name: "deadline",
         type: "uint256",
       },
@@ -77,6 +72,20 @@ const abi = [
     ],
     name: "ProjectStarted",
     type: "event",
+  },
+  {
+    constant: true,
+    inputs: [],
+    name: "returnAllProjects",
+    outputs: [
+      {
+        name: "",
+        type: "address[]",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
   },
 ];
 

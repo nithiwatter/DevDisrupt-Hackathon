@@ -11,4 +11,5 @@ const ethEnabled = () => {
   }
 };
 
+export { web3 };
 export default ethEnabled;

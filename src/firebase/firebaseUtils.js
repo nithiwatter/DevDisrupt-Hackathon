@@ -1,6 +1,7 @@
 import { firebase } from "./config";
 
 const usersRef = firebase.firestore().collection("users");
+const projectsRef = firebase.firestore().collection("projects");
 
 const getUserFromFirestore = (uid) => {
   return new Promise((resolve) => {
@@ -41,9 +42,28 @@ const addUserToFirestore = (userData) => {
   });
 };
 
+const addProjectToFirestore = (projectData) => {
+  return new Promise(async (resolve) => {
+    const { projectAddress, ...rest } = projectData;
+    console.log(projectAddress);
+    await projectsRef.doc(projectAddress).set({ ...rest });
+    projectsRef
+      .doc(projectAddress)
+      .get()
+      .then(function (doc) {
+        if (doc.exists) {
+          resolve(doc.data());
+        } else {
+          resolve(null);
+        }
+      });
+  });
+};
+
 const firebaseUtils = {
   addUserToFirestore,
   getUserFromFirestore,
+  addProjectToFirestore,
 };
 
 export default firebaseUtils;

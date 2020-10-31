@@ -1,3 +1,5 @@
+import { web3 } from "./web3";
+
 const abi = [
   {
     constant: true,
@@ -165,6 +167,20 @@ const abi = [
   {
     constant: true,
     inputs: [],
+    name: "category",
+    outputs: [
+      {
+        name: "",
+        type: "string",
+      },
+    ],
+    payable: false,
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    constant: true,
+    inputs: [],
     name: "getDetails",
     outputs: [
       {
@@ -177,6 +193,10 @@ const abi = [
       },
       {
         name: "projectDesc",
+        type: "string",
+      },
+      {
+        name: "projectCategory",
         type: "string",
       },
       {
@@ -212,6 +232,10 @@ const abi = [
       },
       {
         name: "projectDesc",
+        type: "string",
+      },
+      {
+        name: "projectCategory",
         type: "string",
       },
       {
@@ -263,4 +287,8 @@ const abi = [
   },
 ];
 
-export { abi };
+const createIndividualProject = (address) => {
+  return new web3.eth.Contract(abi, address);
+};
+
+export { createIndividualProject };

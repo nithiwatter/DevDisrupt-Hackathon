@@ -9,6 +9,7 @@ import {
   StepLabel,
   Button,
   Typography,
+  LinearProgress,
   makeStyles,
 } from "@material-ui/core";
 import { TextField } from "formik-material-ui";
@@ -57,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
   projectTitleContainer: {
     display: "flex",
     justifyContent: "center",
+    marginBottom: theme.spacing(2),
   },
   imgContainer: {
     display: "flex",
@@ -64,6 +66,9 @@ const useStyles = makeStyles((theme) => ({
   },
   img: {
     maxWidth: 300,
+  },
+  progressContainer: {
+    marginTop: theme.spacing(2),
   },
 }));
 
@@ -183,10 +188,11 @@ function MyForm(props) {
   );
 }
 
-export default function CreateProjectStepper() {
+export default function CreateProjectStepper(props) {
   const classes = useStyles();
   const { account } = React.useContext(AccountContext);
   const [activeStep, setActiveStep] = React.useState(0);
+  const { handleClose } = props;
   const steps = getSteps();
 
   const handleNext = () => {
@@ -235,22 +241,25 @@ export default function CreateProjectStepper() {
           projectEndDate: add(new Date(), { days: 1 }),
         }}
         validationSchema={validationSchema}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            setSubmitting(false);
-            const projectData = {
-              projectTitle: values.projectTitle,
-              projectDescription: values.projectDescription,
-              projectGoal: values.projectGoal,
-              projectDuration:
-                differenceInDays(values.projectEndDate, new Date()) + 1,
-            };
-            console.log(projectData);
-            methods.createProject(projectData, account);
-          }, 500);
+        onSubmit={async (values) => {
+          const projectData = {
+            projectTitle: values.projectTitle,
+            projectDescription: values.projectDescription,
+            projectCategory: values.category,
+            projectGoal: values.projectGoal,
+            projectDuration:
+              differenceInDays(values.projectEndDate, new Date()) + 1,
+          };
+          const project = await methods.createProject(
+            projectData,
+            account,
+            values.projectEndDate
+          );
+          console.log(project);
+          handleClose();
         }}
       >
-        {({ values, errors }) => (
+        {({ values, errors, isSubmitting }) => (
           <>
             <div className={classes.myForm}>
               <MyForm step={activeStep} />
@@ -264,12 +273,20 @@ export default function CreateProjectStepper() {
                 Back
               </Button>
               <SubmitButton
-                disabled={handleDisabled(activeStep, values, errors)}
+                disabled={
+                  handleDisabled(activeStep, values, errors) || isSubmitting
+                }
                 activeStep={activeStep}
                 steps={steps}
                 handleNext={handleNext}
               />
             </div>
+
+            {isSubmitting && (
+              <div className={classes.progressContainer}>
+                <LinearProgress />
+              </div>
+            )}
           </>
         )}
       </Formik>
