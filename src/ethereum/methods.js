@@ -21,9 +21,11 @@ const initialize = (instance) => {
 };
 
 const getProjects = () => {
+  console.log(2);
+  console.log(crowdfundInstance);
   crowdfundInstance.methods
     .returnAllProjects()
-    .call()
+    .call({ from: "0x76b59Cbd24C6a7Dee0D7bbD5A237d6038Da96F31" })
     .then((projects) => {
       console.log(projects);
     });
@@ -47,7 +49,7 @@ const createProject = (projectData, account) => {
     .send({
       from: account,
       gasPrice: "100000000000",
-      gas: 40000,
+      //   gas: 40000,
     })
     .then(() => console.log("success"))
     .catch((_) =>
